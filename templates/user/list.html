@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<h1>Users List</h1>
+<a href="{{url_for('user.create_user')}}" class="btn btn-primary btn-sm" role="button" >Create User</a>
+<table class="table">
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Action</th>
+    </tr>
+ 
+{% for user in users%}
+    <tr>
+        <td>{{ user.id }}</td>
+        <td>{{ user.name }}</td>
+        <td>{{ user.email }}</td>
+        <td><a href="{{url_for('user.delete_user', id=user['id'])}}" class="btn btn-danger btn-sm" role="button" >Delete</a></td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="3">Tiada pengguna ditemui.</td>
+    </tr>
+</div>
+{% endfor %}
+</table>
+    <div class="pagination">
+        {% if users.has_prev %}
+            <a href="?page=1">&laquo; Awal</a>
+            <a href="?page={{ users.prev_num }}">‹ Sebelum</a>
+        {% endif %}
+
+        <span class="active">Halaman {{ users.page }} / {{ users.pages }}</span>
+
+        {% if users.has_next %}
+            <a href="?page={{ users.next_num }}">Seterusnya ›</a>
+            <a href="?page={{ users.pages }}">Akhir &raquo;</a>
+        {% endif %}
+    </div>
+{% endblock %}

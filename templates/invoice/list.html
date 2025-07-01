@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<h1>Invoices List</h1>
+<a href="{{url_for('invoice.create_invoice')}}" class="btn btn-primary btn-sm" role="button" >Create Invoice</a>
+<table class="table">
+    <tr>
+        <th>Name</th>
+        <th>Matrix No.</th>
+        <th>Amount</th>
+        <th>Action</th>
+    </tr>
+ 
+{% for invoice in invoices%}
+    <tr>
+        <td>{{ invoice['name'] }}</td>
+        <td>{{ invoice['matrix'] }}</td>
+        <td>{{ invoice['amount'] }}</td>
+        <td><a href="{{url_for('invoice.delete_invoice', id=invoice['id'])}}" class="btn btn-danger btn-sm" role="button" >Delete</a></td>
+    </tr>
+</div>
+{% endfor %}
+</table>
+{% endblock %}
