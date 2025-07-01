@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block container %}
+<form action="{{ url_for('student.save_student') }}" method="POST">
+    <div class="form-group">
+        <label for="name_input">Name</label>
+        <input type="text" class="form-control" name="name_input" placeholder="Student Name" oninput="this.value = this.value.toUpperCase()">
+    </div>
+    <div class="form-group">
+        <label for="matric_input">Matric No</label>
+        <input type="text" class="form-control" name="matric_input" placeholder="Matric Number" oninput="this.value = this.value.toUpperCase()">
+    </div>
+    <div class="form-group">
+        <label for="progcode_input">Program Code</label>
+        <input type="text" class="form-control" name="progcode_input" placeholder="Program Code" oninput="this.value = this.value.toUpperCase()">
+    </div>
+    <div class="form-group">
+        <label for="progname_input">Program Name</label>
+        <input type="text" class="form-control" name="progname_input" placeholder="Program Name" oninput="this.value = this.value.toUpperCase()">
+    </div>
+    <div class="form-group">
+        <label for="ic_input">IC No</label>
+        <input type="number" class="form-control" name="ic_input" placeholder="Student IC Number">
+    </div>
+    <div class="form-group">
+        <label for="sem_input">Semester</label>
+        <input type="number" class="form-control" name="sem_input" placeholder="Current Semester">
+    </div>
+    <div class="form-group">
+        <label for="session_input">Session</label>
+        <input type="number" class="form-control" name="session_input" placeholder="Current Session">
+    </div>
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="exampleCheck1" name="confirm">
+        <label class="form-check-label" for="exampleCheck1">Details are correct?</label>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+{% endblock %}
