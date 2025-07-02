@@ -2,55 +2,98 @@
 {% block container %}
 
 <h1>Students List</h1>
-<a href="{{url_for('student.create_student')}}" class="btn btn-primary btn-sm" role="button" >Create student</a>
-<table class="table">
-    <tr>
-        <th>Id</th>
-        <th>Matric</th>
-        <th>Name</th>
-        <th>Prog Code</th>
-        <th>Prog Name</th>
-        <th>IC No</th>
-        <th>Session</th>
-        <th>Semester</th>
-        <th>Action</th>
-    </tr>
- 
-{% for student in students%}
-    <tr>
-        <td>{{ student.id }}</td>
-        <td>{{ student.matric_no }}</td>
-        <td>{{ student.name }}</td>
-        <td>{{ student.prog_code }}</td>
-        <td>{{ student.prog_name }}</td>
-        <td>{{ student.ic_no }}</td>
-        <td>{{ student.session }}</td>
-        <td>{{ student.semester }}</td>
-        <td>
-            <a href="{{ url_for('student.delete_student', id=student.id) }}"
-                class="btn btn-danger btn-sm"
-                role="button"
-                onclick="return confirm('Are you sure you want to delete this student?');">Delete</a>
-        </td>
-    </tr>
-    {% else %}
-    <tr>
-        <td colspan="3">student not found.</td>
-    </tr>
-</div>
-{% endfor %}
-</table>
-    <div class="pagination">
-        {% if students.has_prev %}
-            <a href="?page=1">&laquo; First</a>
-            <a href="?page={{ students.prev_num }}">‹ Previous</a>
-        {% endif %}
-
-        <span class="active">Page {{ students.page }} / {{ students.pages }}</span>
-
-        {% if students.has_next %}
-            <a href="?page={{ students.next_num }}">Next ›</a>
-            <a href="?page={{ students.pages }}">Last &raquo;</a>
-        {% endif %}
+<div class="container">
+    <div class="row mb-3">
+        <!-- Column 2: Upload File -->
+        <div class="col-md-5">
+            <form method="POST" action="{{ url_for('student.upload_student_file') }}" enctype="multipart/form-data">
+            <div class="form-group d-flex align-items-center gap-2">
+                <label for="file" class="me-2 mb-0">Upload Student File:</label>
+                <input type="file" name="file" class="form-control form-control-sm w-auto" required>
+                <button type="submit" class="btn btn-primary btn-sm ms-2">Upload</button>
+            </div>
+            </form>
+        </div>
+        <!-- Column 3: Search Form -->
+        <div class="col-md-4">
+            <form method="GET" action="{{ url_for('student.list_student') }}">
+                <div class="input-group input-group-sm">
+                    <input type="text" name="keyword" value="{{ request.args.get('keyword', '') }}" class="form-control" placeholder="Search by name, program or code">
+                    <button class="btn btn-outline-secondary" type="submit">
+                    <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
+    <div class="row">
+        <table class="table">
+            <tr>
+                <th>Id</th>
+                <th>Matric</th>
+                <th>Name</th>
+                <th>Prog Code</th>
+                <th>Prog Name</th>
+                <th>IC No</th>
+                <th>Session</th>
+                <th>Semester</th>
+                <th style="width: 10%;">Action</th>
+            </tr>
+        
+        {% for student in students%}
+            <tr>
+                <td>{{ student.id }}</td>
+                <td>{{ student.matric_no }}</td>
+                <td>{{ student.name }}</td>
+                <td>{{ student.prog_code }}</td>
+                <td>{{ student.prog_name }}</td>
+                <td>{{ student.ic_no }}</td>
+                <td>{{ student.session }}</td>
+                <td>{{ student.semester }}</td>
+                <td>
+                    <a href="{{ url_for('student.edit_student', id=student.id) }}"
+                        class="btn btn-primary btn-sm"
+                        role="button"
+                        onclick="return confirm('Are you sure you want to delete this student?');"><i class="fa-solid fa-pen-to-square"></i></a>
+                    <a href="{{ url_for('student.delete_student', id=student.id) }}"
+                        class="btn btn-danger btn-sm"
+                        role="button"
+                        onclick="return confirm('Are you sure you want to delete this student?');"><i class="fa-solid fa-trash"></i></a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="3">student not found.</td>
+            </tr>
+        
+        {% endfor %}
+        </table>
+            <div class="pagination">
+                    {% if students.has_prev %}
+                        <a href="?page=1">&laquo; First</a>
+                        <a href="?page={{ students.prev_num }}">‹ Previous</a>
+                    {% endif %}
+
+                    <span class="active">Page {{ students.page }} / {{ students.pages }}</span>
+
+                    {% if students.has_next %}
+                        <a href="?page={{ students.next_num }}">Next ›</a>
+                        <a href="?page={{ students.pages }}">Last &raquo;</a>
+                    {% endif %}
+                </div>
+            </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <a href="{{ url_for('student.create_student') }}" class="btn btn-primary btn-sm" role="button">
+            <i class="fa-solid fa-plus"></i>
+            </a>
+            <a href="{{url_for('student.student_chart')}}" class="btn btn-primary btn-sm" role="button">
+            <i class="fa-solid fa-chart-simple"></i>
+            </a>
+        </div>
+    </div>
+    
+</div>
 {% endblock %}
+

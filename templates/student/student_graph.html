@@ -1,16 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Interactive Student Chart</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
+{% extends 'base.html' %}
+{% block container %}
     <div style="width: 80%; margin: 0 auto;">
         <h2>Jumlah Pelajar Mengikut Kod Program</h2>
         <canvas id="studentChart"></canvas>
+        <div class="row justify-content-center mt-4">
+            <div class="col-auto">
+                <a href="{{ url_for('student.list_student') }}" class="btn btn-primary btn-sm" role="button">
+                <i class="fa-solid fa-backward"></i> Back
+                </a>
+            </div>
+        </div>
     </div>
-
+{% endblock %}
+{% block scripts %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         // Fetch the JSON data
         fetch("{{ url_for('student.student_graph_data') }}")
@@ -41,5 +45,4 @@
                 });
             });
     </script>
-</body>
-</html>
+{% endblock %}
