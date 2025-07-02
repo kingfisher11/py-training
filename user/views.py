@@ -51,7 +51,6 @@ def list_user():
 
     # return jsonify(res)
 
-
 @user.route("/hapus-pengguna/<id>")
 def delete_user(id):
     return "<p>Kod untuk hapus Pengguna</p>"+id

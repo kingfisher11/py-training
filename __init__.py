@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+load_dotenv()
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
@@ -8,6 +10,7 @@ import os
 db = SQLAlchemy()
 def create_app():
     app = Flask(__name__)
+    app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key')
 
     # Database config
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@127.0.0.1/edums_hep'
@@ -19,9 +22,11 @@ def create_app():
     # Register Blueprints
     from einvoicing.user.views import user
     from einvoicing.invoice.views import invoice
+    from einvoicing.student.views import student
 
     app.register_blueprint(user, url_prefix='/usr')
     app.register_blueprint(invoice, url_prefix='/inv')
+    app.register_blueprint(student, url_prefix='/std')
 
     # DB test route
     @app.route("/test-db")

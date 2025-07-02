@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Interactive Student Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div style="width: 80%; margin: 0 auto;">
+        <h2>Jumlah Pelajar Mengikut Kod Program</h2>
+        <canvas id="studentChart"></canvas>
+    </div>
+
+    <script>
+        // Fetch the JSON data
+        fetch("{{ url_for('student.student_graph_data') }}")
+            .then(response => response.json())
+            .then(data => {
+                const ctx = document.getElementById('studentChart').getContext('2d');
+                const chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Bilangan Pelajar',
+                            data: data.values,
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                stepSize: 1
+                            }
+                        }
+                    }
+                });
+            });
+    </script>
+</body>
+</html>

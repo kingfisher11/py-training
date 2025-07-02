@@ -20,22 +20,22 @@
     </tr>
     {% else %}
     <tr>
-        <td colspan="3">Tiada pengguna ditemui.</td>
+        <td colspan="3">User not found.</td>
     </tr>
 </div>
 {% endfor %}
 </table>
     <div class="pagination">
         {% if users.has_prev %}
-            <a href="?page=1">&laquo; Awal</a>
-            <a href="?page={{ users.prev_num }}">‹ Sebelum</a>
+            <a href="?page=1">&laquo; First</a>
+            <a href="?page={{ users.prev_num }}">‹ Previous</a>
         {% endif %}
 
         <span class="active">Halaman {{ users.page }} / {{ users.pages }}</span>
 
         {% if users.has_next %}
-            <a href="?page={{ users.next_num }}">Seterusnya ›</a>
-            <a href="?page={{ users.pages }}">Akhir &raquo;</a>
+            <a href="?page={{ users.next_num }}">Next ›</a>
+            <a href="?page={{ users.pages }}">Last &raquo;</a>
         {% endif %}
     </div>
 {% endblock %}
