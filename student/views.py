@@ -8,6 +8,8 @@ from einvoicing.club.models import Club
 import pandas as pd
 import matplotlib.pyplot as plt
 from werkzeug.utils import secure_filename
+from einvoicing.utils import login_required
+
 import io
 import os
 
@@ -63,6 +65,7 @@ def delete_student(id):
     return redirect(url_for('student.list_student'))  # Replace with your actual listing route
 
 @student.route("/list")
+@login_required
 def list_student():
     keyword = request.args.get('keyword', '').strip()
     page = request.args.get('page', 1, type=int)

@@ -4,9 +4,11 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from flask_migrate import Migrate
+from flask_wtf import CSRFProtect
 
 import psycopg2
 import os
+csrf = CSRFProtect()
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -27,10 +29,14 @@ def create_app():
     from einvoicing.user.views import user
     from einvoicing.invoice.views import invoice
     from einvoicing.student.views import student
+    from einvoicing.auth.views import auth
+    from einvoicing.home.views import home
 
+    app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(user, url_prefix='/usr')
     app.register_blueprint(invoice, url_prefix='/inv')
     app.register_blueprint(student, url_prefix='/std')
+    app.register_blueprint(home)
     
     # Upload settings
     UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads')
@@ -48,5 +54,5 @@ def create_app():
             return "Database connected successfully!"
         except Exception as e:
             return f"Database connection failed: {str(e)}"
-
+    csrf.init_app(app)
     return app
