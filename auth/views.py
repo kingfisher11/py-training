@@ -41,6 +41,8 @@ def login():
         if user and user.check_password(form.password.data):
             session['user_id'] = user.id
             session['user_name'] = user.name
+            session['user_email'] = user.email
+
             flash('Login successful!', 'success')
             return redirect(url_for('student.list_student'))
         else:

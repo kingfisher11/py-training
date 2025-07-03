@@ -1,0 +1,13 @@
+Hello,
+
+A new student has been registered.
+
+Name: {{ student.name }}
+Matric No: {{ student.matric_no }}
+IC No: {{ student.ic_no }}
+Program: {{ student.prog_code }} - {{ student.prog_name }}
+Session: {{ student.session }}
+Semester: {{ student.semester }}
+
+Regards,
+Sistem Inbois

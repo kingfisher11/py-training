@@ -9,12 +9,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from werkzeug.utils import secure_filename
 from einvoicing.utils import login_required
+from einvoicing.utils import send_student_created_email
 
-import io
+import csv
+import pandas as pd
 import os
 
 student = Blueprint('student', __name__)
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'pdf', 'csv'}
+ALLOWED_EXTENSIONS = {'csv', 'xlsx'}
 
 @student.route("/create-student/", methods=['GET'])
 def create_student():
@@ -36,6 +38,12 @@ def save_student():
     ic_no = request.form.get('ic_input')
     semester = request.form.get('sem_input')
     session = request.form.get('session_input')
+
+    # Validation: Check if matric number exists
+    existing = Student.query.filter_by(matric_no=matric_no).first()
+    if existing:
+        flash('Matric number already exists. Please use a different one.', 'danger')
+        return redirect(url_for('student.create_student'))
     
     # Save to database
     new_student = Student(
@@ -51,7 +59,10 @@ def save_student():
     db.session.add(new_student)
     db.session.commit()
 
-    flash('Student saved successfully!', 'success')
+    # Send email to all users
+    send_student_created_email(new_student)
+
+    flash("Student created successfully and notification email sent.", "success")
     return redirect(url_for('student.list_student'))  # Replace with your listing route
 
 @student.route("/delete-student/<id>", methods=["GET"])
@@ -154,31 +165,58 @@ def student_chart():
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@student.route("/upload-student", methods=["GET", "POST"])
+@student.route("/upload-student-file", methods=["POST"])
 def upload_student_file():
-    if request.method == "POST":
-        file = request.files.get('file')
+    file = request.files.get('file')
 
-        if not file:
-            flash('No file part', 'danger')
-            return redirect(request.url)
+    if not file or not allowed_file(file.filename):
+        flash('Invalid file format. Only .csv or .xlsx allowed.', 'danger')
+        return redirect(url_for('student.list_student'))
 
-        if file.filename == '':
-            flash('No selected file', 'danger')
-            return redirect(request.url)
+    filename = secure_filename(file.filename)
+    filepath = os.path.join('uploads', filename)
+    file.save(filepath)
 
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            save_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-            file.save(save_path)
-            flash(f'File {filename} uploaded successfully.', 'success')
-            return redirect(url_for('student.upload_student_file'))
+    try:
+        students_data = []
+        if filename.endswith('.csv'):
+            with open(filepath, newline='', encoding='utf-8') as csvfile:
+                reader = csv.DictReader(csvfile)
+                students_data = list(reader)
+        elif filename.endswith('.xlsx'):
+            df = pd.read_excel(filepath, engine='openpyxl')
+            students_data = df.to_dict(orient='records')
 
-        else:
-            flash('File type not allowed.', 'danger')
-            return redirect(request.url)
+        count = 0
+        for row in students_data:
+            # Ensure matric_no is cast to string for comparison
+            matric_no = str(row['matric_no']).strip()
 
-    return render_template("upload_student.html")
+            # Skip if student already exists
+            if Student.query.filter_by(matric_no=matric_no).first():
+                continue
+
+            # Create new student record
+            student = Student(
+                name=str(row['name']).strip(),
+                matric_no=matric_no,
+                prog_code=str(row['prog_code']).strip(),
+                prog_name=str(row['prog_name']).strip(),
+                ic_no=str(row['ic_no']).strip(),
+                semester=str(row['semester']).strip(),
+                session=str(row['session']).strip()
+            )
+            db.session.add(student)
+            count += 1
+
+        db.session.commit()
+        flash(f'Successfully uploaded {count} new student(s).', 'success')
+
+    except Exception as e:
+        flash(f'Error processing file: {str(e)}', 'danger')
+
+    return redirect(url_for('student.list_student'))
+
 
 @student.route('/register-membership', methods=['GET', 'POST'])
 def register_membership():

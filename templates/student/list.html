@@ -17,6 +17,7 @@
         <!-- Upload File -->
         <div class="col-md-5">
             <form method="POST" action="{{ url_for('student.upload_student_file') }}" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="form-group d-flex align-items-center gap-2">
                     <label for="file" class="me-2 mb-0">Upload Student:</label>
                     <input type="file" name="file" class="form-control form-control-sm w-auto" required>
