@@ -1,9 +1,10 @@
 from flask import Blueprint
 from markupsafe import escape
 # from einvoicing import db
-from flask import render_template, request
-from einvoicing.user.models import User
+from flask import render_template, request, flash, session, redirect, url_for
+from einvoicing.user.models import User, RegistrationForm, LoginForm
 from flask import Blueprint, jsonify
+from einvoicing import db
 
 user = Blueprint('user', __name__)
 
@@ -19,20 +20,7 @@ def create_user():
 def save_user():
     return "<p>Simpan Pengguna</p>"
 
-@user.route("/selenggara-pengguna",methods=['GET', 'POST'])
-def manage_user():
-    return "<p>Selenggara Pengguna</p>"
-
-@user.route("/sunting-pengguna/<id>")
-def edit_user():
-    return "<p>Sunting Pengguna</p>"
-
-@user.route("/kemaskini-pengguna/<id>")
-def update_user(id):
-    # return "<p>Kemaskini Pengguna</p> {{id}}"
-    return f'Kemaskini Pengguna {escape(id)}'
-
-@user.route("/senarai")
+@user.route("/list")
 def list_user():
     # return "<p>Senarai Pengguna</p>"
     page = request.args.get('page', 1, type=int)
@@ -54,3 +42,4 @@ def list_user():
 @user.route("/hapus-pengguna/<id>")
 def delete_user(id):
     return "<p>Kod untuk hapus Pengguna</p>"+id
+

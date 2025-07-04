@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>New Student Created</title>
+  <style>
+    .container {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      padding: 20px;
+      border-radius: 6px;
+      color: #333;
+      max-width: 600px;
+      margin: auto;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 6px;
+      padding: 20px;
+      border: 1px solid #dce3e8;
+    }
+    h2 {
+      color: #2c3e50;
+    }
+    .info {
+      margin: 10px 0;
+    }
+    .footer {
+      margin-top: 30px;
+      font-size: 12px;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>New Student Registered</h2>
+      <p>Hello,</p>
+      <p>A new student has been successfully registered in the system.</p>
+
+      <div class="info">
+        <strong>Name:</strong> {{ student.name }}<br>
+        <strong>Matric No:</strong> {{ student.matric_no }}<br>
+        <strong>IC No:</strong> {{ student.ic_no }}<br>
+        <strong>Program:</strong> {{ student.prog_code }} - {{ student.prog_name }}<br>
+        <strong>Session:</strong> {{ student.session }}<br>
+        <strong>Semester:</strong> {{ student.semester }}
+      </div>
+
+      <p>Regards,<br>Sistem Inbois</p>
+    </div>
+
+    <div class="footer">
+      This is an automated notification from the student management system.
+    </div>
+  </div>
+</body>
+</html>

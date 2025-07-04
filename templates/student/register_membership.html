@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block container %}
+
+<h1>Register Student to Club</h1>
+<div class="container">
+  <div class="row">
+    <form method="POST">
+      <div class="form-group">
+        <label>Student</label>
+        <select class="form-control" name="student_id" required>
+          <option value="">-- Choose Student --</option>
+          {% for s in students %}
+            <option value="{{ s.id }}">{{ s.matric_no }} - {{ s.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group mt-2">
+        <label>Club</label>
+        <select class="form-control" name="club_code" required>
+          <option value="">-- Choose Club --</option>
+          {% for c in clubs %}
+            <option value="{{ c.code }}">{{ c.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <button class="btn btn-primary mt-3" type="submit">Register</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

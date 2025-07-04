@@ -2,55 +2,132 @@
 {% block container %}
 
 <h1>Students List</h1>
-<a href="{{url_for('student.create_student')}}" class="btn btn-primary btn-sm" role="button" >Create student</a>
-<table class="table">
-    <tr>
-        <th>Id</th>
-        <th>Matric</th>
-        <th>Name</th>
-        <th>Prog Code</th>
-        <th>Prog Name</th>
-        <th>IC No</th>
-        <th>Session</th>
-        <th>Semester</th>
-        <th>Action</th>
-    </tr>
- 
-{% for student in students%}
-    <tr>
-        <td>{{ student.id }}</td>
-        <td>{{ student.matric_no }}</td>
-        <td>{{ student.name }}</td>
-        <td>{{ student.prog_code }}</td>
-        <td>{{ student.prog_name }}</td>
-        <td>{{ student.ic_no }}</td>
-        <td>{{ student.session }}</td>
-        <td>{{ student.semester }}</td>
-        <td>
-            <a href="{{ url_for('student.delete_student', id=student.id) }}"
-                class="btn btn-danger btn-sm"
-                role="button"
-                onclick="return confirm('Are you sure you want to delete this student?');">Delete</a>
-        </td>
-    </tr>
-    {% else %}
-    <tr>
-        <td colspan="3">student not found.</td>
-    </tr>
+
+<div class="container mt-3">
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
 </div>
-{% endfor %}
-</table>
-    <div class="pagination">
-        {% if students.has_prev %}
-            <a href="?page=1">&laquo; First</a>
-            <a href="?page={{ students.prev_num }}">‹ Previous</a>
-        {% endif %}
 
-        <span class="active">Page {{ students.page }} / {{ students.pages }}</span>
+<div class="container">
+    <div class="row mb-3">
+        <!-- Upload File -->
+        <div class="col-md-5">
+            <form method="POST" action="{{ url_for('student.upload_student_file') }}" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="form-group d-flex align-items-center gap-2">
+                    <label for="file" class="me-2 mb-0">Upload Student:</label>
+                    <input type="file" name="file" class="form-control form-control-sm w-auto" required>
+                    <button type="submit" class="btn btn-primary btn-sm ms-2">Upload</button>
+                </div>
+            </form>
+        </div>
 
-        {% if students.has_next %}
-            <a href="?page={{ students.next_num }}">Next ›</a>
-            <a href="?page={{ students.pages }}">Last &raquo;</a>
-        {% endif %}
+        <!-- Search -->
+        <div class="col-md-4">
+            <form method="GET" action="{{ url_for('student.list_student') }}">
+                <div class="input-group input-group-sm">
+                    <input type="text" name="keyword" value="{{ request.args.get('keyword', '') }}" class="form-control" placeholder="Search by name, program or code">
+                    <button class="btn btn-outline-secondary" type="submit">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
+
+    <!-- Student Table -->
+    <div class="row">
+        <table class="table table-bordered table-hover table-sm">
+            <thead class="table-light">
+                <tr>
+                    <th>No</th>
+                    <th>Matric</th>
+                    <th>Name</th>
+                    <th>Prog Code</th>
+                    <th>Prog Name</th>
+                    <th>IC No</th>
+                    <th>Session</th>
+                    <th>Semester</th>
+                    <th style="width: 10%;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students.items %}
+                    <tr>
+                        <td>{{ loop.index + (students.page - 1) * students.per_page }}</td>
+                        <td>{{ student.matric_no }}</td>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.prog_code }}</td>
+                        <td>{{ student.prog_name }}</td>
+                        <td>{{ student.ic_no }}</td>
+                        <td>{{ student.session }}</td>
+                        <td>{{ student.semester }}</td>
+                        <td>
+                            <a href="{{ url_for('student.edit_student', id=student.id) }}" class="btn btn-primary btn-sm" title="Edit">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <a href="{{ url_for('student.delete_student', id=student.id) }}" class="btn btn-danger btn-sm" title="Delete" onclick="return confirm('Are you sure you want to delete this student?');">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="9" class="text-center">No students found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="row">
+        <div class="col text-center">
+            <nav>
+                <ul class="pagination justify-content-center pagination-sm">
+                    {% if students.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1&keyword={{ keyword }}">« First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ students.prev_num }}&keyword={{ keyword }}">‹ Prev</a>
+                        </li>
+                    {% endif %}
+
+                    <li class="page-item active">
+                        <span class="page-link">
+                            Page {{ students.page }} / {{ students.pages }}
+                        </span>
+                    </li>
+
+                    {% if students.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ students.next_num }}&keyword={{ keyword }}">Next ›</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ students.pages }}&keyword={{ keyword }}">Last »</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row justify-content-center mt-3">
+        <div class="col-auto">
+            <a href="{{ url_for('student.create_student') }}" class="btn btn-success btn-sm" title="Add New Student">
+                <i class="fa-solid fa-plus"></i>
+            </a>
+            <a href="{{ url_for('student.student_chart') }}" class="btn btn-secondary btn-sm" title="Student Chart">
+                <i class="fa-solid fa-chart-simple"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
